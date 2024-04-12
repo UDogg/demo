@@ -1,5 +1,5 @@
-# Use a Maven base image to build the project
-FROM maven:3.9.6-openjdk-21 as builder
+# Use a Maven base image to build the project with Java 17
+FROM maven:3.8.6-openjdk-17 AS builder
 
 # Copy the pom.xml file and source code
 COPY ./pom.xml /build/pom.xml
@@ -11,14 +11,16 @@ WORKDIR /build
 # Build the application without running tests
 RUN mvn clean package -DskipTests
 
-# Start with a base image that has Java 21 installed
-FROM openjdk:21.0.2-jdk
+# Start with a base image that has Java 17 installed
+FROM eclipse-temurin:17-jdk
+
+# Expose the port the app runs on
 EXPOSE 8080
 
-# Optionally set a maintainer name to let people know who made this Dockerfile
+# Set a maintainer name
 LABEL maintainer="choudharyu2003@gmail.com"
 
-# Set a working directory inside the container
+# The application's jar file
 ADD target/demo.jar demo.jar
 
 ENTRYPOINT ["java", "-jar", "/demo.jar"]
